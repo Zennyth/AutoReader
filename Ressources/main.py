@@ -15,7 +15,8 @@ def main():
     # listener.start()
     # listener.join()
     eyeTracker = EyeTracker()
-    eyeTracker.analyze()
+    while True:
+        eyeTracker.analyze()
 
 
 if __name__ == "__main__":
