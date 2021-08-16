@@ -85,8 +85,8 @@ import imutils
 class EyeTracker:
     def __init__(self):
         # load the face and eye detector
-        self.faceCascade = cv2.CascadeClassifier("./helpers/eye.xml")
-        self.eyeCascade = cv2.CascadeClassifier("./helpers/eye.xml")
+        self.faceCascade = cv2.CascadeClassifier("./helpers/models/haarcascade_frontalface_default.xml")
+        self.eyeCascade = cv2.CascadeClassifier("./helpers/models/haarcascade_eye.xml")
         self.cap = cv2.VideoCapture(0) #initialize video capture
 
     def track(self, image):
@@ -101,33 +101,40 @@ class EyeTracker:
             # extract the face ROI and update the list of
             # bounding boxes
             faceROI = image[fY:fY + fH, fX:fX + fW]
-            rects.append((fX, fY, fX + fW, fY + fH))
+            # rects.append((fX, fY, fX + fW, fY + fH))
 
             # detect eyes in the face ROI
-            eyeRects = self.eyeCascade.detectMultiScale(faceROI,
-            scaleFactor = 1.1, minNeighbors = 10, minSize = (20, 20),
-            flags = cv2.CASCADE_SCALE_IMAGE)
+            eyeRects = self.eyeCascade.detectMultiScale(faceROI, scaleFactor = 1.1, minNeighbors = 10, minSize = (20, 20), flags = cv2.CASCADE_SCALE_IMAGE)
             # loop over the eye bounding boxes
-        for (eX, eY, eW, eH) in eyeRects:
-            # update the list of boounding boxes
-            rects.append(
-            (fX + eX, fY + eY, fX + eX + eW, fY + eY + eH))
-            # return the rectangles representing bounding
-            # boxes around the faces and eyes
+            for (eX, eY, eW, eH) in eyeRects:
+                # update the list of boounding boxes
+                rects.append(
+                (fX + eX, fY + eY, fX + eX + eW, fY + eY + eH))
+                # return the rectangles representing bounding
+                # boxes around the faces and eyes
         return rects
 
     def analyze(self):
         ret, frame = self.cap.read()
+        eyes = []
 
         if ret == True:
-            frame = cv2.cvtColor(frame,cv2.COLOR_RGB2GRAY)
-            frame = imutils.resize(frame, width = 300)
+            # frame = imutils.resize(frame, width = 300)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
             # detect faces and eyes in the image
             rects = self.track(gray)
-            # loop over the face bounding boxes and draw them
-            for rect in rects:
-                cv2.rectangle(frame, (rect[0], rect[1]), (rect[2], rect[3]),    (0, 255, 0), 2)
-            # show the tracked eyes and face
-            cv2.imshow("Tracking", frame)
+            if len(rects) == 2:
+                # loop over the face bounding boxes and draw them
+                for rect in rects:
+                    center = (int((rect[0] + rect[2]) / 2), int((rect[1] + rect[3]) / 2))
+                    r = int((abs(rect[0] - rect[2]) + abs(rect[1] - rect[3])) / 20)
+                    eyes.append([center, r])
+                    cv2.circle(frame, center, r, (0, 255, 0), 2)
+                # show the tracked eyes and face
+                cv2.imshow("Tracking", frame)
+                cv2.waitKey(1)
+
+                print("Eyes : ", eyes)
+
+        return eyes
