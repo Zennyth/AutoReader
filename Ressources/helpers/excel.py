@@ -6,7 +6,7 @@ class Excel:
         self.ws = self.wb.active
         self.path = "./datasets/" + folder + "/wb.xlsx"
         self.folder = folder
-        self.ws.append(["img", "x", "y", "dx", "dy", "leftEyeX", "leftEyeY", "leftEyeR", "rightEyeX", "rightEyeY", "rightEyeR"])
+        self.ws.append(["img", "dx", "dy", "leftEyeX", "leftEyeY", "rightEyeX", "rightEyeY"])
     
     def save(self):
         self.wb.save(self.path)
