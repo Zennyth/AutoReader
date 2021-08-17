@@ -3,6 +3,7 @@ from helpers.webdriver import Browser
 from helpers.tracker import EyeTracker
 from helpers.excel import Excel
 
+
 index = 0
 path = "2021_08_17_12-00"
 
@@ -24,7 +25,7 @@ def main():
         eyes = eyeTracker.analyze()
         if len(eyes) == 2:
             name = "screenshot-" + str(index)
-            browser.toImg("./datasets/" + path + "/" + name)
+            #browser.toImg("./datasets/" + path + "/" + name)
             wheel = getWheel()
             data = [name + ".png", wheel["dx"], wheel["dy"]]
             formatData(data, eyes)

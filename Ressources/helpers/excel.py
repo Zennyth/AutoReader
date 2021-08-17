@@ -1,4 +1,5 @@
 from openpyxl import Workbook
+import csv
 
 class Excel:
     def __init__(self, folder):
@@ -10,6 +11,10 @@ class Excel:
     
     def save(self):
         self.wb.save(self.path)
+        with open("./datasets/" + self.folder + "/wb.csv", 'w', newline="") as f:
+            c = csv.writer(f)
+            for r in self.ws.iter_rows(): # generator; was sh.rows
+                c.writerow([cell.value for cell in r])
 
     def insert(self, data):
         self.ws.append(data)
